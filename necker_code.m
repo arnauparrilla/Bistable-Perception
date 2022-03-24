@@ -6,9 +6,30 @@ valueSet = {[0], [0], [0 0 0], [0 0 0], [0 0 0 0 0 0]};
 P = containers.Map(keySet,valueSet);
 
 J = 1;
-b = p_brute_force(theta, P, J);
-b = b.values;
-disp(horzcat(b{:}));
+[Z,b] = p_brute_force(theta, P, J);
+distribution_hist(Z,b);
+
+probs = [];
+%amb variable aux
+for i = 1:length(keys(b))
+    k = keys(b);
+    probs(i) = sum(b(char(k(i))));
+end
+
+
+plot(1:14,probs);
+
+function distribution_hist(Z,b)
+    b = b.values;
+    disp(length(horzcat(b{:})));
+    probs = horzcat(b{:})/Z;
+    %plot(1:14,stat/Z);
+    %disp(stat);
+    plot(1:14,probs);
+
+    
+end
+
 
 %vector=[(:)];
 %disp(vector);
@@ -68,9 +89,10 @@ conections, we use the Issing model to get the prob ANIRIA MES A GENERAL
 @param {Matrix} theta: Necker conections matrix
 @param {container} P: P container with 0's arrays to store the porbs
 @returns {container} Probs: P with the correct probs
+@returns {float} Z: normalitzation constant
 
 %}
-function Probs = p_brute_force(theta, Probs, J)
+function [Z,Probs] = p_brute_force(theta, Probs, J)
     for i = 0:255
         v = neckvec(i);
         mu = sum(v);
@@ -138,6 +160,17 @@ function Probs = p_brute_force(theta, Probs, J)
 
         end
     end
+    %{
+    container_vals = Probs.values;
+    list_val = horzcat(container_vals{:});
+    Z = sum(list_val);
+    disp(Z);
+    Probs(Probs.keySet,list_val/Z);
+    %Probs.values = (list_val/Z);
+    %}
+    val = Probs.values;
+    Z = sum(horzcat(val{:}));
+
 end
 
 %{
