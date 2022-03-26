@@ -5,20 +5,41 @@ keySet = {'8','6','4','2','0'};
 valueSet = {[0], [0], [0 0 0], [0 0 0], [0 0 0 0 0 0]};
 P = containers.Map(keySet,valueSet);
 
+
+%{
 J = 1;
 [Z,b] = p_brute_force(theta, P, J);
-distribution_hist(Z,b);
+val = b.values;
+probs = horzcat(val{:});
+disp(probs./Z);
+%distribution_hist(Z,b);
+%}
+J = 0;
+distribution_hist(J,theta,P);
 
-probs = [];
-%amb variable aux
-for i = 1:length(keys(b))
-    k = keys(b);
-    probs(i) = sum(b(char(k(i))));
+
+
+function distribution_hist(J,theta,P)
+    [Z,b] = p_brute_force(theta, P, J);
+    val = b.values;
+    probs = horzcat(val{:});
+    disp(probs./Z);
+    probs = [];
+    for i = 1:length(keys(b))
+        k = keys(b);
+        probs(i) = sum(b(char(k(i))));
+    end
+    probs = probs./(2*Z);
+    f = flip(probs);
+    f = f(2:end);
+    dist = cat(2,probs,f);
+    plot(-8:2:8,dist);
+
 end
+%}
 
 
-plot(1:14,probs);
-
+%{
 function distribution_hist(Z,b)
     b = b.values;
     disp(length(horzcat(b{:})));
@@ -29,6 +50,7 @@ function distribution_hist(Z,b)
 
     
 end
+%}
 
 
 %vector=[(:)];
